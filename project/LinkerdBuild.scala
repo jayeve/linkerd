@@ -20,9 +20,18 @@ object LinkerdBuild extends Base {
     .dependsOn(Finagle.buoyantCore)
     .withTwitterLibs(Deps.finagle("core"))
     .withLibs(Deps.jackson)
+    .withLibs(Deps.logstash)
+    .withLibs(Deps.logback)
     .withLib(Deps.jacksonYaml)
     .withLib(Deps.guava)
     .withTests()
+    .settings(
+      excludeDependencies ++= Seq(
+        "org.apache.logging.log4j" % "log4j-core",
+        "org.slf4j" % "jul-to-slf4j",
+        "org.slf4j" % "slf4j-api"
+      )
+    )
 
   val consul = projectDir("consul")
     .dependsOn(configCore)
@@ -109,7 +118,9 @@ object LinkerdBuild extends Base {
       .withTests()
 
     val serversets = projectDir("namer/serversets")
-      .withTwitterLib(Deps.finagle("serversets").exclude("org.slf4j", "slf4j-jdk14"))
+      .withTwitterLib(Deps.finagle("serversets")
+        .exclude("org.slf4j", "slf4j-jdk14")
+        .exclude("org.slf4j", "slf4j-log4j12"))
       .withTests()
       .dependsOn(core % "compile->compile;test->test")
 
@@ -274,6 +285,13 @@ object LinkerdBuild extends Base {
         Telemetry.adminMetricsExport
       )
       .withTests()
+    .settings(
+      excludeDependencies ++= Seq(
+        "org.apache.logging.log4j" % "log4j-core",
+        "org.slf4j" % "jul-to-slf4j",
+        "org.slf4j" % "slf4j-api"
+      )
+    )
 
     object Storage {
 
@@ -344,7 +362,14 @@ object LinkerdBuild extends Base {
     val main = projectDir("namerd/main")
       .dependsOn(core, admin, configCore)
       .withBuildProperties("io/buoyant/namerd")
-      .settings(coverageExcludedPackages := ".*")
+      .settings(
+        coverageExcludedPackages := ".*",
+        excludeDependencies ++= Seq(
+          "org.apache.logging.log4j" % "log4j-core",
+          "org.slf4j" % "jul-to-slf4j",
+          "org.slf4j" % "slf4j-api"
+        )
+      )
 
     /**
      * An assembly-running script that adds the namerd plugin directory
@@ -608,6 +633,13 @@ object LinkerdBuild extends Base {
       .withTests()
       .withE2e()
       .configWithLibs(Test)(Deps.jacksonDatabind, Deps.jacksonYaml)
+      .settings(
+        excludeDependencies ++= Seq(
+          "org.apache.logging.log4j" % "log4j-core",
+          "org.slf4j" % "jul-to-slf4j",
+          "org.slf4j" % "slf4j-api"
+        )
+    )
 
     val tls = projectDir("linkerd/tls")
 
@@ -658,7 +690,9 @@ object LinkerdBuild extends Base {
 
     object Announcer {
       val serversets = projectDir("linkerd/announcer/serversets")
-        .withTwitterLib(Deps.finagle("serversets").exclude("org.slf4j", "slf4j-jdk14"))
+        .withTwitterLib(Deps.finagle("serversets")
+          .exclude("org.slf4j", "slf4j-jdk14")
+          .exclude("org.slf4j", "slf4j-log4j12"))
         .dependsOn(core)
 
       val all = aggregateDir("linkerd/announcer", serversets)
@@ -678,6 +712,13 @@ object LinkerdBuild extends Base {
       .withBuildProperties("io/buoyant/linkerd")
       .settings(coverageExcludedPackages := ".*")
       .withE2e()
+      .settings(
+        excludeDependencies ++= Seq(
+          "org.apache.logging.log4j" % "log4j-core",
+          "org.slf4j" % "jul-to-slf4j",
+          "org.slf4j" % "slf4j-api"
+        )
+      )
 
     /*
      * linkerd packaging configurations.

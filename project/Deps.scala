@@ -25,6 +25,7 @@ object Deps {
   def zkCandidate =
     ("com.twitter.common.zookeeper" % "candidate" % "0.0.84")
       .exclude("com.twitter.common", "util")
+      .exclude("org.slf4j", "slf4j-log4j12")
 
   // Jackson (parsing)
   val jacksonVersion = "2.9.6"
@@ -38,6 +39,17 @@ object Deps {
     "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion
   val jackson =
     jacksonCore :: jacksonAnnotations :: jacksonDatabind :: jacksonScala :: Nil
+
+  val logback = Seq(
+    "org.slf4j" % "jul-to-slf4j" % "1.7.25",
+    "ch.qos.logback" % "logback-classic" % "1.2.3",
+    "ch.qos.logback.contrib" % "logback-json-classic" % "0.1.5",
+    "ch.qos.logback.contrib" % "logback-jackson" % "0.1.5"
+  )
+
+  val logstash = Seq(
+    "net.logstash.logback" % "logstash-logback-encoder" % "5.3"
+  )
 
   val jacksonYaml =
     "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % jacksonVersion
